@@ -17,10 +17,15 @@ import kotlin.coroutines.suspendCoroutine
 object SunnyWeatherNetwork {
 
     private val placeService = ServiceCreator.create<PlaceService>()
+    private val weatherService = ServiceCreator.create(WeatherService::class.java)
 
     //App 在发起网络请求拉取数据的同时，需要能保证用户在界面上的操作也能正常响应，界面可以刷新。
     // 所以，就需要一套机制能保证耗时的 IO 操作，能与 UI 刷新操作同步执行。
     suspend fun <T> searchPlaces(query: String) = placeService.searchPlaces(query).await()
+    suspend fun getDailyWeather(lng: String, lat: String) =
+        weatherService.getDailyWeather(lng, lat).await()
+    suspend fun getRealtimeWeather(lng: String, lat: String) =
+        weatherService.getRealtimeWeather(lng, lat).await()
 
     private suspend fun <T> Call<T>.await(): T {
         return suspendCoroutine {  continuation ->
